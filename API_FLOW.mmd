@@ -1,0 +1,159 @@
+graph LR
+    subgraph "Client Layer"
+        Client["Client Application<br/>(Web/Mobile)"]
+    end
+
+    subgraph "Authentication"
+        Auth["JWT Authentication<br/>POST /api/token/<br/>POST /api/token/refresh/"]
+    end
+
+    subgraph "API Endpoints"
+        Users["Users API<br/>GET/POST /api/users/<br/>GET/PUT/PATCH/DELETE /api/users/{id}/"]
+        Cars["Cars API<br/>GET/POST /api/cars/<br/>GET/PUT/PATCH/DELETE /api/cars/{id}/"]
+        Parts["Parts API<br/>GET/POST /api/parts/<br/>GET/POST /api/part-categories/<br/>GET/POST /api/company-stores/"]
+        Forum["Forum API<br/>GET/POST /api/forum/categories/<br/>GET/POST /api/forum/threads/<br/>GET/POST /api/forum/responses/<br/>GET/POST /api/forum/experts/"]
+        Comments["Comments API<br/>GET/POST /api/comments/<br/>GET/POST /api/comment-replies/"]
+        Ratings["Ratings API<br/>GET/POST /api/reviews/<br/>GET /api/seller-ratings/"]
+        Notifications["Notifications API<br/>GET /api/notifications/<br/>GET/PUT /api/notification-preferences/"]
+    end
+
+    subgraph "ViewSets & Serializers"
+        UserView["UserViewSet<br/>+ Serializers"]
+        CarView["CarViewSet<br/>+ Serializers"]
+        PartView["CarPartViewSet<br/>+ Serializers"]
+        ForumView["ForumThreadViewSet<br/>ForumResponseViewSet<br/>+ Serializers"]
+        CommentView["CommentViewSet<br/>+ Serializers"]
+        RatingView["ReviewViewSet<br/>+ Serializers"]
+        NotifView["NotificationViewSet<br/>+ Serializers"]
+    end
+
+    subgraph "Business Logic"
+        UserLogic["User Management<br/>- Authentication<br/>- Profile Management<br/>- Verification"]
+        CarLogic["Car Marketplace<br/>- Listing Management<br/>- Image Handling<br/>- Status Workflow"]
+        PartLogic["Parts Marketplace<br/>- Inventory Management<br/>- Compatibility Tracking<br/>- Store Management"]
+        ForumLogic["Forum System<br/>- Thread Management<br/>- Expert Verification<br/>- Voting System"]
+        CommentLogic["Comment System<br/>- Generic Comments<br/>- Nested Replies<br/>- Like Tracking"]
+        RatingLogic["Rating System<br/>- Review Management<br/>- Aggregation<br/>- Seller Response"]
+        NotifLogic["Notification System<br/>- Notification Creation<br/>- Preference Management<br/>- Delivery"]
+    end
+
+    subgraph "Models & Database"
+        UserModel["CustomUser<br/>ExpertVerification<br/>NotificationPreference"]
+        CarModel["Car<br/>CarImage<br/>CarSpecification"]
+        PartModel["CarPart<br/>PartImage<br/>PartCategory<br/>PartCompatibility<br/>CompanyStore"]
+        ForumModel["ForumThread<br/>ForumResponse<br/>ForumCategory<br/>ResponseVote"]
+        CommentModel["Comment<br/>CommentReply<br/>CommentLike"]
+        RatingModel["Review<br/>Rating<br/>ReviewHelpfulness"]
+        NotifModel["Notification<br/>NotificationPreference"]
+        DB["SQLite3 Database<br/>(Development)<br/>PostgreSQL (Production)"]
+    end
+
+    subgraph "External Services"
+        FileStorage["File Storage<br/>- Profile Pictures<br/>- Car Images<br/>- Part Images<br/>- Documents"]
+        Email["Email Service<br/>- Notifications<br/>- Verification<br/>- Alerts"]
+    end
+
+    %% Client flow
+    Client -->|1. Request with JWT| Auth
+    Auth -->|2. Return Token| Client
+    Client -->|3. API Request + Token| Users
+    Client -->|3. API Request + Token| Cars
+    Client -->|3. API Request + Token| Parts
+    Client -->|3. API Request + Token| Forum
+    Client -->|3. API Request + Token| Comments
+    Client -->|3. API Request + Token| Ratings
+    Client -->|3. API Request + Token| Notifications
+
+    %% API to ViewSets
+    Users -->|4. Route to| UserView
+    Cars -->|4. Route to| CarView
+    Parts -->|4. Route to| PartView
+    Forum -->|4. Route to| ForumView
+    Comments -->|4. Route to| CommentView
+    Ratings -->|4. Route to| RatingView
+    Notifications -->|4. Route to| NotifView
+
+    %% ViewSets to Business Logic
+    UserView -->|5. Execute| UserLogic
+    CarView -->|5. Execute| CarLogic
+    PartView -->|5. Execute| PartLogic
+    ForumView -->|5. Execute| ForumLogic
+    CommentView -->|5. Execute| CommentLogic
+    RatingView -->|5. Execute| RatingLogic
+    NotifView -->|5. Execute| NotifLogic
+
+    %% Business Logic to Models
+    UserLogic -->|6. Query/Update| UserModel
+    CarLogic -->|6. Query/Update| CarModel
+    PartLogic -->|6. Query/Update| PartModel
+    ForumLogic -->|6. Query/Update| ForumModel
+    CommentLogic -->|6. Query/Update| CommentModel
+    RatingLogic -->|6. Query/Update| RatingModel
+    NotifLogic -->|6. Query/Update| NotifModel
+
+    %% Models to Database
+    UserModel -->|7. ORM| DB
+    CarModel -->|7. ORM| DB
+    PartModel -->|7. ORM| DB
+    ForumModel -->|7. ORM| DB
+    CommentModel -->|7. ORM| DB
+    RatingModel -->|7. ORM| DB
+    NotifModel -->|7. ORM| DB
+
+    %% External Services
+    UserLogic -->|File Upload| FileStorage
+    CarLogic -->|File Upload| FileStorage
+    PartLogic -->|File Upload| FileStorage
+    NotifLogic -->|Send Email| Email
+
+    %% Response flow
+    DB -->|8. Return Data| UserModel
+    DB -->|8. Return Data| CarModel
+    DB -->|8. Return Data| PartModel
+    DB -->|8. Return Data| ForumModel
+    DB -->|8. Return Data| CommentModel
+    DB -->|8. Return Data| RatingModel
+    DB -->|8. Return Data| NotifModel
+
+    UserModel -->|9. Serialize| UserView
+    CarModel -->|9. Serialize| CarView
+    PartModel -->|9. Serialize| PartView
+    ForumModel -->|9. Serialize| ForumView
+    CommentModel -->|9. Serialize| CommentView
+    RatingModel -->|9. Serialize| RatingView
+    NotifModel -->|9. Serialize| NotifView
+
+    UserView -->|10. JSON Response| Users
+    CarView -->|10. JSON Response| Cars
+    PartView -->|10. JSON Response| Parts
+    ForumView -->|10. JSON Response| Forum
+    CommentView -->|10. JSON Response| Comments
+    RatingView -->|10. JSON Response| Ratings
+    NotifView -->|10. JSON Response| Notifications
+
+    Users -->|11. Return to Client| Client
+    Cars -->|11. Return to Client| Client
+    Parts -->|11. Return to Client| Client
+    Forum -->|11. Return to Client| Client
+    Comments -->|11. Return to Client| Client
+    Ratings -->|11. Return to Client| Client
+    Notifications -->|11. Return to Client| Client
+
+    %% Styling
+    classDef client fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef auth fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef api fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef viewset fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef logic fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef model fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef db fill:#ede7f6,stroke:#311b92,stroke-width:2px
+    classDef external fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+
+    class Client client
+    class Auth auth
+    class Users,Cars,Parts,Forum,Comments,Ratings,Notifications api
+    class UserView,CarView,PartView,ForumView,CommentView,RatingView,NotifView viewset
+    class UserLogic,CarLogic,PartLogic,ForumLogic,CommentLogic,RatingLogic,NotifLogic logic
+    class UserModel,CarModel,PartModel,ForumModel,CommentModel,RatingModel,NotifModel model
+    class DB db
+    class FileStorage,Email external
