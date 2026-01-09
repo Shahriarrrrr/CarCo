@@ -1,0 +1,402 @@
+erDiagram
+    CUSTOMUSER ||--o{ CAR : sells
+    CUSTOMUSER ||--o{ CARPART : sells
+    CUSTOMUSER ||--o{ FORUMTHREAD : creates
+    CUSTOMUSER ||--o{ FORUMRESPONSE : creates
+    CUSTOMUSER ||--o{ COMMENT : creates
+    CUSTOMUSER ||--o{ COMMENTREPLY : creates
+    CUSTOMUSER ||--o{ REVIEW : gives
+    CUSTOMUSER ||--o{ REVIEW : receives
+    CUSTOMUSER ||--o{ NOTIFICATION : receives
+    CUSTOMUSER ||--o{ EXPERTVERIFICATION : has
+    CUSTOMUSER ||--o{ COMPANYSTORE : owns
+    CUSTOMUSER ||--o{ NOTIFICATIONPREFERENCE : has
+
+    CAR ||--o{ CARIMAGE : has
+    CAR ||--|| CARSPECIFICATION : has
+    CAR ||--o{ COMMENT : receives
+
+    CARPART ||--o{ PARTIMAGE : has
+    CARPART ||--o{ PARTCOMPATIBILITY : has
+    CARPART ||--o{ COMMENT : receives
+    PARTCATEGORY ||--o{ CARPART : contains
+    PARTCATEGORY ||--o{ PARTCATEGORY : parent_of
+
+    FORUMCATEGORY ||--o{ FORUMTHREAD : contains
+    FORUMTHREAD ||--o{ FORUMRESPONSE : has
+    FORUMRESPONSE ||--o{ RESPONSEVOTE : receives
+
+    COMMENT ||--o{ COMMENTREPLY : has
+    COMMENT ||--o{ COMMENTLIKE : receives
+    COMMENTREPLY ||--o{ COMMENTLIKE : receives
+
+    REVIEW ||--o{ REVIEWHELPFULNESS : receives
+    CUSTOMUSER ||--|| RATING : has
+
+    CUSTOMUSER {
+        uuid id PK
+        string email UK
+        string first_name
+        string last_name
+        date date_of_birth
+        string phone_number
+        string street_address
+        string city
+        string state_province
+        string postal_code
+        string country
+        image profile_picture
+        text bio
+        string user_type
+        string company_name
+        string company_registration_number
+        url company_website
+        boolean email_verified
+        boolean phone_verified
+        string verification_status
+        file verification_document
+        boolean is_active
+        boolean is_staff
+        boolean is_seller
+        boolean is_buyer
+        decimal seller_rating
+        int seller_reviews_count
+        datetime date_joined
+        datetime last_login
+        datetime updated_at
+        boolean is_suspended
+        text suspension_reason
+        datetime suspension_until
+    }
+
+    CAR {
+        uuid id PK
+        uuid seller_id FK
+        string make
+        string model
+        int year
+        int mileage
+        string transmission
+        string fuel_type
+        decimal engine_capacity
+        string condition
+        decimal price
+        string title
+        text description
+        string city
+        string state_province
+        string country
+        string status
+        boolean is_featured
+        datetime created_at
+        datetime updated_at
+        datetime sold_at
+        string color
+        string body_type
+        int doors
+        int seats
+        json features
+    }
+
+    CARIMAGE {
+        uuid id PK
+        uuid car_id FK
+        image image
+        boolean is_primary
+        datetime uploaded_at
+    }
+
+    CARSPECIFICATION {
+        uuid id PK
+        uuid car_id FK
+        int horsepower
+        int torque
+        decimal acceleration_0_100
+        int top_speed
+        decimal fuel_consumption_city
+        decimal fuel_consumption_highway
+        decimal length
+        decimal width
+        decimal height
+        int weight
+        string warranty_remaining
+        text service_history
+        datetime created_at
+        datetime updated_at
+    }
+
+    PARTCATEGORY {
+        uuid id PK
+        string name UK
+        text description
+        image icon
+        uuid parent_category_id FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    CARPART {
+        uuid id PK
+        uuid seller_id FK
+        uuid category_id FK
+        string name
+        text description
+        string part_number
+        string condition
+        string brand
+        string model
+        decimal price
+        int quantity_in_stock
+        int quantity_sold
+        string status
+        boolean is_featured
+        int warranty_months
+        text warranty_description
+        decimal weight
+        string dimensions
+        decimal rating
+        int reviews_count
+        datetime created_at
+        datetime updated_at
+    }
+
+    PARTIMAGE {
+        uuid id PK
+        uuid part_id FK
+        image image
+        boolean is_primary
+        datetime uploaded_at
+    }
+
+    PARTCOMPATIBILITY {
+        uuid id PK
+        uuid part_id FK
+        string car_make
+        string car_model
+        int car_year_from
+        int car_year_to
+        text notes
+        datetime created_at
+    }
+
+    COMPANYSTORE {
+        uuid id PK
+        uuid company_id FK
+        string store_name
+        text store_description
+        image store_logo
+        image store_banner
+        string store_email
+        string store_phone
+        url store_website
+        string store_address
+        string store_city
+        string store_state
+        string store_country
+        decimal store_rating
+        int total_reviews
+        boolean is_verified
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    FORUMCATEGORY {
+        uuid id PK
+        string name UK
+        text description
+        image icon
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    FORUMTHREAD {
+        uuid id PK
+        uuid author_id FK
+        uuid category_id FK
+        string title
+        text description
+        string car_make
+        string car_model
+        int car_year
+        string status
+        boolean is_pinned
+        boolean is_featured
+        int views_count
+        int responses_count
+        datetime created_at
+        datetime updated_at
+        datetime resolved_at
+    }
+
+    FORUMRESPONSE {
+        uuid id PK
+        uuid thread_id FK
+        uuid author_id FK
+        text content
+        boolean is_expert_response
+        boolean is_ai_response
+        decimal ai_confidence
+        int helpful_count
+        int unhelpful_count
+        boolean is_approved
+        boolean is_flagged
+        string flag_reason
+        datetime created_at
+        datetime updated_at
+    }
+
+    RESPONSEVOTE {
+        uuid id PK
+        uuid response_id FK
+        uuid user_id FK
+        string vote_type
+        datetime created_at
+    }
+
+    EXPERTVERIFICATION {
+        uuid id PK
+        uuid user_id FK
+        json expertise_areas
+        int years_of_experience
+        text bio
+        string status
+        file verification_document
+        int helpful_responses
+        int total_responses
+        datetime created_at
+        datetime updated_at
+        datetime verified_at
+    }
+
+    COMMENT {
+        uuid id PK
+        uuid author_id FK
+        uuid content_type_id FK
+        uuid object_id FK
+        text text
+        int likes_count
+        int replies_count
+        boolean is_approved
+        boolean is_flagged
+        string flag_reason
+        datetime created_at
+        datetime updated_at
+    }
+
+    COMMENTREPLY {
+        uuid id PK
+        uuid comment_id FK
+        uuid author_id FK
+        text text
+        int likes_count
+        boolean is_approved
+        boolean is_flagged
+        string flag_reason
+        datetime created_at
+        datetime updated_at
+    }
+
+    COMMENTLIKE {
+        uuid id PK
+        uuid user_id FK
+        string like_type
+        uuid comment_id FK
+        uuid reply_id FK
+        datetime created_at
+    }
+
+    REVIEW {
+        uuid id PK
+        uuid reviewer_id FK
+        uuid seller_id FK
+        string title
+        text text
+        int rating
+        int communication_rating
+        int item_accuracy_rating
+        int shipping_rating
+        boolean is_verified_purchase
+        int helpful_count
+        int unhelpful_count
+        boolean is_approved
+        boolean is_flagged
+        string flag_reason
+        text seller_response
+        datetime seller_response_date
+        datetime created_at
+        datetime updated_at
+    }
+
+    RATING {
+        uuid id PK
+        uuid seller_id FK
+        decimal average_rating
+        int total_reviews
+        int five_star_count
+        int four_star_count
+        int three_star_count
+        int two_star_count
+        int one_star_count
+        decimal average_communication
+        decimal average_item_accuracy
+        decimal average_shipping
+        datetime created_at
+        datetime updated_at
+    }
+
+    REVIEWHELPFULNESS {
+        uuid id PK
+        uuid review_id FK
+        uuid user_id FK
+        string vote_type
+        datetime created_at
+    }
+
+    NOTIFICATION {
+        uuid id PK
+        uuid user_id FK
+        string notification_type
+        string title
+        text message
+        uuid related_object_id
+        string related_object_type
+        boolean is_read
+        string action_url
+        datetime created_at
+        datetime read_at
+    }
+
+    NOTIFICATIONPREFERENCE {
+        uuid id PK
+        uuid user_id FK
+        boolean email_new_message
+        boolean email_listing_update
+        boolean email_expert_response
+        boolean email_review_received
+        boolean email_seller_response
+        boolean email_forum_reply
+        boolean email_part_available
+        boolean email_price_alert
+        boolean email_verification_status
+        boolean email_account_alert
+        boolean email_system_announcement
+        boolean app_new_message
+        boolean app_listing_update
+        boolean app_expert_response
+        boolean app_review_received
+        boolean app_seller_response
+        boolean app_forum_reply
+        boolean app_part_available
+        boolean app_price_alert
+        boolean app_verification_status
+        boolean app_account_alert
+        boolean app_system_announcement
+        string email_frequency
+        boolean quiet_hours_enabled
+        time quiet_hours_start
+        time quiet_hours_end
+        datetime created_at
+        datetime updated_at
+    }

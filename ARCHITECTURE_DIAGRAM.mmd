@@ -1,0 +1,127 @@
+graph TB
+    subgraph "Authentication & Core"
+        JWT["JWT Authentication<br/>(rest_framework_simplejwt)"]
+        DRF["Django REST Framework"]
+        Django["Django 6.0"]
+    end
+
+    subgraph "User Management"
+        CU["CustomUser<br/>- Email-based auth<br/>- Individual/Company<br/>- Seller/Buyer roles<br/>- Verification status<br/>- Account suspension"]
+        EV["ExpertVerification<br/>- Expertise areas<br/>- Years of experience<br/>- Verification status<br/>- Helpfulness metrics"]
+        NP["NotificationPreference<br/>- Email/App toggles<br/>- Frequency settings<br/>- Quiet hours"]
+    end
+
+    subgraph "Marketplace - Cars"
+        Car["Car<br/>- Make/Model/Year<br/>- Mileage/Transmission<br/>- Fuel type/Condition<br/>- Price/Status<br/>- Location"]
+        CarImg["CarImage<br/>- Multiple images<br/>- Primary image<br/>- Upload tracking"]
+        CarSpec["CarSpecification<br/>- Performance metrics<br/>- Fuel efficiency<br/>- Dimensions/Weight<br/>- Warranty/Service"]
+    end
+
+    subgraph "Marketplace - Parts"
+        PartCat["PartCategory<br/>- Hierarchical<br/>- Parent-child<br/>- Icons/Descriptions"]
+        CarPart["CarPart<br/>- Name/Description<br/>- Condition/Brand<br/>- Price/Inventory<br/>- Warranty<br/>- Ratings"]
+        PartImg["PartImage<br/>- Multiple images<br/>- Primary image<br/>- Upload tracking"]
+        PartComp["PartCompatibility<br/>- Car make/model/year<br/>- Compatibility notes<br/>- Year range"]
+        Store["CompanyStore<br/>- Store branding<br/>- Contact info<br/>- Location<br/>- Store ratings<br/>- Verification"]
+    end
+
+    subgraph "Community - Forum"
+        ForumCat["ForumCategory<br/>- Name/Description<br/>- Icons<br/>- Active status"]
+        Thread["ForumThread<br/>- Title/Description<br/>- Car context<br/>- Status<br/>- Pinned/Featured<br/>- View/Response counts"]
+        Response["ForumResponse<br/>- Content<br/>- Expert flag<br/>- AI response support<br/>- Helpful/Unhelpful<br/>- Moderation flags"]
+        Vote["ResponseVote<br/>- Helpful/Unhelpful<br/>- User tracking"]
+    end
+
+    subgraph "Community - Comments"
+        Comment["Comment<br/>- Generic relation<br/>- Text content<br/>- Likes/Replies<br/>- Moderation flags"]
+        Reply["CommentReply<br/>- Nested replies<br/>- Text content<br/>- Likes<br/>- Moderation flags"]
+        Like["CommentLike<br/>- Comment/Reply<br/>- User tracking"]
+    end
+
+    subgraph "Ratings & Reviews"
+        Review["Review<br/>- Title/Text<br/>- 1-5 rating<br/>- Aspect ratings<br/>- Verified purchase<br/>- Seller response<br/>- Helpful votes"]
+        Rating["Rating<br/>- Average rating<br/>- Distribution<br/>- Aspect averages<br/>- Dynamic updates"]
+        RatingHelp["ReviewHelpfulness<br/>- Helpful/Unhelpful<br/>- User tracking"]
+    end
+
+    subgraph "Notifications"
+        Notif["Notification<br/>- 11 types<br/>- Title/Message<br/>- Read status<br/>- Related object<br/>- Action URL"]
+    end
+
+    subgraph "API Layer"
+        Router["DRF Router<br/>- DefaultRouter<br/>- ViewSet registration"]
+        Endpoints["API Endpoints<br/>/api/users/<br/>/api/cars/<br/>/api/parts/<br/>/api/forum/<br/>/api/comments/<br/>/api/reviews/<br/>/api/notifications/"]
+    end
+
+    %% User relationships
+    CU -->|has| EV
+    CU -->|has| NP
+    CU -->|creates| Notif
+    CU -->|receives| Notif
+
+    %% Car relationships
+    CU -->|sells| Car
+    Car -->|has many| CarImg
+    Car -->|has one| CarSpec
+    Car -->|has many| Comment
+
+    %% Parts relationships
+    CU -->|sells| CarPart
+    PartCat -->|contains| CarPart
+    CarPart -->|has many| PartImg
+    CarPart -->|has many| PartComp
+    CarPart -->|has many| Comment
+    CU -->|owns| Store
+
+    %% Forum relationships
+    ForumCat -->|contains| Thread
+    CU -->|creates| Thread
+    Thread -->|has many| Response
+    CU -->|creates| Response
+    Response -->|receives| Vote
+    CU -->|votes on| Vote
+    EV -->|marks| Response
+
+    %% Comments relationships
+    Comment -->|has many| Reply
+    Reply -->|receives| Like
+    Comment -->|receives| Like
+    CU -->|creates| Comment
+    CU -->|creates| Reply
+    CU -->|likes| Like
+
+    %% Ratings relationships
+    CU -->|gives| Review
+    CU -->|receives| Review
+    Review -->|aggregates to| Rating
+    Review -->|receives| RatingHelp
+    CU -->|votes on| RatingHelp
+
+    %% API relationships
+    JWT -->|authenticates| DRF
+    DRF -->|powers| Router
+    Router -->|exposes| Endpoints
+    Endpoints -->|access| CU
+    Endpoints -->|access| Car
+    Endpoints -->|access| CarPart
+    Endpoints -->|access| Thread
+    Endpoints -->|access| Comment
+    Endpoints -->|access| Review
+    Endpoints -->|access| Notif
+
+    %% Styling
+    classDef auth fill:#ff9999,stroke:#cc0000,stroke-width:2px,color:#000
+    classDef user fill:#99ccff,stroke:#0066cc,stroke-width:2px,color:#000
+    classDef marketplace fill:#99ff99,stroke:#00cc00,stroke-width:2px,color:#000
+    classDef community fill:#ffcc99,stroke:#ff6600,stroke-width:2px,color:#000
+    classDef ratings fill:#cc99ff,stroke:#6600cc,stroke-width:2px,color:#000
+    classDef notif fill:#ffff99,stroke:#cccc00,stroke-width:2px,color:#000
+    classDef api fill:#ff99ff,stroke:#cc00cc,stroke-width:2px,color:#000
+
+    class JWT,DRF,Django auth
+    class CU,EV,NP user
+    class Car,CarImg,CarSpec,PartCat,CarPart,PartImg,PartComp,Store marketplace
+    class ForumCat,Thread,Response,Vote,Comment,Reply,Like community
+    class Review,Rating,RatingHelp ratings
+    class Notif notif
+    class Router,Endpoints api

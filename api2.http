@@ -1,0 +1,831 @@
+### mvpBackend API Testing File
+### Use with REST Client extension in VS Code or similar tools
+### Replace {token}, {id}, {user-id}, etc. with actual values
+
+@baseUrl = http://localhost:8000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY3ODY2MDM3LCJpYXQiOjE3Njc4NjU3MzcsImp0aSI6ImExYjgyMzBmM2FkMjQxYThhZmJjYTU0ZjU4MWEyMzBjIiwidXNlcl9pZCI6IjNlNzA5N2RhLTFmNjktNGQ2Yi1hY2MyLTY0ODZhZTVjYzg1MiJ9.tQJqOzhiAR3OpfmLVTeB2t3X3Ccf9OI1X4lnkgGMLGw
+
+### ============================================
+### AUTHENTICATION ENDPOINTS
+### ============================================
+
+### Get JWT Token
+POST http://localhost:8000/api/token/
+Content-Type: application/json
+
+{
+  "email": "unique_user_jan8_2026_141h32m@testmail.com",
+  "password": "1234@Shahriar"
+}
+
+### Refresh JWT Token
+POST http://localhost:8000/api/token/refresh/
+Content-Type: application/json
+
+{
+  "refresh": "your_refresh_token_here"
+}
+
+### ============================================
+### USER ENDPOINTS
+### ============================================
+
+### List All Users
+GET {{baseUrl}}/users/
+Authorization: Bearer {{token}}
+
+### Create New User (Standard Endpoint)
+POST {{baseUrl}}/users/
+Content-Type: application/json
+
+{
+  "email": "unique_user_jan8_2026_141h32m@testmail.com",
+  "password": "1234@Shahriar",
+  "password2": "1234@Shahriar",
+  "first_name": "Test",
+  "last_name": "User",
+  "user_type": "individual"
+}
+
+### Create New User (Register Endpoint - Alternative)
+POST {{baseUrl}}/users/register/
+Content-Type: application/json
+
+{
+  "email": "register_user_jan8_2026@testmail.com",
+  "password": "1234",
+  "password2": "1234",
+  "first_name": "Register",
+  "last_name": "User",
+  "user_type": "individual"
+}
+
+### Get User Details
+GET {{baseUrl}}/users/{user-id}/
+Authorization: Bearer {{token}}
+
+### Update User (Full)
+PUT {{baseUrl}}/users/{user-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "bio": "Car enthusiast",
+  "phone_number": "+8801700000000"
+}
+
+### Update User (Partial)
+PATCH {{baseUrl}}/users/{user-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bio": "Updated bio"
+}
+
+### Delete User
+DELETE {{baseUrl}}/users/{user-id}/
+Authorization: Bearer {{token}}
+
+### ============================================
+### CAR ENDPOINTS
+### ============================================
+
+### List All Cars
+GET {{baseUrl}}/cars/
+Authorization: Bearer {{token}}
+
+### List Cars with Filters
+GET {{baseUrl}}/cars/?status=active&city=Dhaka&page=1&page_size=20
+Authorization: Bearer {{token}}
+
+### Create Car Listing
+POST {{baseUrl}}/cars/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2020,
+  "mileage": 45000,
+  "transmission": "automatic",
+  "fuel_type": "petrol",
+  "condition": "good",
+  "price": "25000.00",
+  "title": "2020 Toyota Camry - Excellent Condition",
+  "description": "Well-maintained, single owner, full service history",
+  "city": "Dhaka",
+  "state_province": "Dhaka",
+  "country": "Bangladesh",
+  "color": "Silver",
+  "body_type": "Sedan",
+  "doors": 4,
+  "seats": 5,
+  "features": ["AC", "Power Steering", "ABS", "Airbags"]
+}
+
+### Get Car Details
+GET {{baseUrl}}/cars/{car-id}/
+Authorization: Bearer {{token}}
+
+### Update Car (Full)
+PUT {{baseUrl}}/cars/{car-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "price": "24000.00",
+  "description": "Updated description"
+}
+
+### Update Car (Partial)
+PATCH {{baseUrl}}/cars/{car-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "active"
+}
+
+### Delete Car
+DELETE {{baseUrl}}/cars/{car-id}/
+Authorization: Bearer {{token}}
+
+### ============================================
+### PARTS ENDPOINTS
+### ============================================
+
+### List All Parts
+GET {{baseUrl}}/parts/
+Authorization: Bearer {{token}}
+
+### List Parts with Filters
+GET {{baseUrl}}/parts/?status=active&brand=Bosch&page=1
+Authorization: Bearer {{token}}
+
+### Create Part Listing
+POST {{baseUrl}}/parts/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "category": "category-uuid",
+  "name": "Brake Pads",
+  "description": "High-quality brake pads for Toyota Camry",
+  "part_number": "BP-001",
+  "condition": "new",
+  "brand": "Bosch",
+  "model": "Camry",
+  "price": "1500.00",
+  "quantity_in_stock": 50,
+  "status": "active",
+  "warranty_months": 12,
+  "warranty_description": "1 year warranty"
+}
+
+### Get Part Details
+GET {{baseUrl}}/parts/{part-id}/
+Authorization: Bearer {{token}}
+
+### Update Part
+PATCH {{baseUrl}}/parts/{part-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "price": "1400.00",
+  "quantity_in_stock": 45
+}
+
+### Delete Part
+DELETE {{baseUrl}}/parts/{part-id}/
+Authorization: Bearer {{token}}
+
+### List Part Categories
+GET {{baseUrl}}/part-categories/
+Authorization: Bearer {{token}}
+
+### Create Part Category
+POST {{baseUrl}}/part-categories/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Engine Parts",
+  "description": "All engine-related parts"
+}
+
+### List Company Stores
+GET {{baseUrl}}/company-stores/
+Authorization: Bearer {{token}}
+
+### Create Company Store
+POST {{baseUrl}}/company-stores/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "company": "company-user-id",
+  "store_name": "ABC Auto Parts",
+  "store_description": "Premium auto parts supplier",
+  "store_email": "store@example.com",
+  "store_phone": "+8801700000000",
+  "store_address": "123 Main St",
+  "store_city": "Dhaka",
+  "store_state": "Dhaka",
+  "store_country": "Bangladesh"
+}
+
+### ============================================
+### FORUM ENDPOINTS
+### ============================================
+
+### List Forum Categories
+GET {{baseUrl}}/forum/categories/
+Authorization: Bearer {{token}}
+
+### Create Forum Category
+POST {{baseUrl}}/forum/categories/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Engine Repair",
+  "description": "Discuss engine repair and maintenance"
+}
+
+### List Forum Threads
+GET {{baseUrl}}/forum/threads/
+Authorization: Bearer {{token}}
+
+### List Threads by Category
+GET {{baseUrl}}/forum/threads/?category={category-id}
+Authorization: Bearer {{token}}
+
+### Create Forum Thread
+POST {{baseUrl}}/forum/threads/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "category": "category-uuid",
+  "title": "How to replace brake pads on 2020 Camry?",
+  "description": "I need help with replacing brake pads. Can anyone guide me?",
+  "car_make": "Toyota",
+  "car_model": "Camry",
+  "car_year": 2020
+}
+
+### Get Thread Details
+GET {{baseUrl}}/forum/threads/{thread-id}/
+Authorization: Bearer {{token}}
+
+### Mark Thread as Resolved
+PATCH {{baseUrl}}/forum/threads/{thread-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "resolved"
+}
+
+### List Forum Responses
+GET {{baseUrl}}/forum/responses/
+Authorization: Bearer {{token}}
+
+### Create Forum Response
+POST {{baseUrl}}/forum/responses/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "thread": "thread-uuid",
+  "content": "Here's how to replace brake pads: First, remove the wheel..."
+}
+
+### List Expert Verifications
+GET {{baseUrl}}/forum/experts/
+Authorization: Bearer {{token}}
+
+### Create Expert Verification
+POST {{baseUrl}}/forum/experts/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "user": "user-uuid",
+  "expertise_areas": ["Engine Repair", "Electrical", "Transmission"],
+  "years_of_experience": 10,
+  "bio": "Professional mechanic with 10 years experience"
+}
+
+### ============================================
+### COMMENTS ENDPOINTS
+### ============================================
+
+### List Comments
+GET {{baseUrl}}/comments/
+Authorization: Bearer {{token}}
+
+### Create Comment
+POST {{baseUrl}}/comments/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content_type": "cars.car",
+  "object_id": "car-uuid",
+  "text": "Great car! Very well maintained."
+}
+
+### Get Comment Details
+GET {{baseUrl}}/comments/{comment-id}/
+Authorization: Bearer {{token}}
+
+### Update Comment
+PATCH {{baseUrl}}/comments/{comment-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "Updated comment text"
+}
+
+### Delete Comment
+DELETE {{baseUrl}}/comments/{comment-id}/
+Authorization: Bearer {{token}}
+
+### List Comment Replies
+GET {{baseUrl}}/comment-replies/
+Authorization: Bearer {{token}}
+
+### Create Comment Reply
+POST {{baseUrl}}/comment-replies/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "comment": "comment-uuid",
+  "text": "Thanks for the feedback!"
+}
+
+### ============================================
+### RATINGS & REVIEWS ENDPOINTS
+### ============================================
+
+### List Reviews
+GET {{baseUrl}}/reviews/
+Authorization: Bearer {{token}}
+
+### Create Review
+POST {{baseUrl}}/reviews/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "seller": "seller-uuid",
+  "title": "Great seller, fast shipping",
+  "text": "Excellent experience buying from this seller. Highly recommended!",
+  "rating": 5,
+  "communication_rating": 5,
+  "item_accuracy_rating": 5,
+  "shipping_rating": 5,
+  "is_verified_purchase": true
+}
+
+### Get Review Details
+GET {{baseUrl}}/reviews/{review-id}/
+Authorization: Bearer {{token}}
+
+### Update Review
+PATCH {{baseUrl}}/reviews/{review-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "text": "Updated review text"
+}
+
+### Delete Review
+DELETE {{baseUrl}}/reviews/{review-id}/
+Authorization: Bearer {{token}}
+
+### List Seller Ratings
+GET {{baseUrl}}/seller-ratings/
+Authorization: Bearer {{token}}
+
+### Get Seller Rating
+GET {{baseUrl}}/seller-ratings/{seller-id}/
+Authorization: Bearer {{token}}
+
+### ============================================
+### NOTIFICATIONS ENDPOINTS
+### ============================================
+
+### List Notifications
+GET {{baseUrl}}/notifications/
+Authorization: Bearer {{token}}
+
+### List Unread Notifications
+GET {{baseUrl}}/notifications/?is_read=false
+Authorization: Bearer {{token}}
+
+### Get Notification Details
+GET {{baseUrl}}/notifications/{notification-id}/
+Authorization: Bearer {{token}}
+
+### Mark Notification as Read
+PATCH {{baseUrl}}/notifications/{notification-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "is_read": true
+}
+
+### Get Notification Preferences
+GET {{baseUrl}}/notification-preferences/
+Authorization: Bearer {{token}}
+
+### Update Notification Preferences
+PUT {{baseUrl}}/notification-preferences/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "email_new_message": true,
+  "email_listing_update": true,
+  "app_new_message": true,
+  "email_frequency": "instant"
+}
+
+### ============================================
+### MESSAGING ENDPOINTS
+### ============================================
+
+### List Conversations
+GET {{baseUrl}}/conversations/
+Authorization: Bearer {{token}}
+
+### Create Conversation
+POST {{baseUrl}}/conversations/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "conversation_type": "direct",
+  "participant_ids": ["user-id-2"]
+}
+
+### Get Conversation Details
+GET {{baseUrl}}/conversations/{conversation-id}/
+Authorization: Bearer {{token}}
+
+### Get Messages in Conversation
+GET {{baseUrl}}/conversations/{conversation-id}/messages/
+Authorization: Bearer {{token}}
+
+### Mark Conversation as Read
+POST {{baseUrl}}/conversations/{conversation-id}/mark_as_read/
+Authorization: Bearer {{token}}
+
+### Add Participant to Conversation
+POST {{baseUrl}}/conversations/{conversation-id}/add_participant/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "user_id": "user-uuid"
+}
+
+### Remove Participant from Conversation
+POST {{baseUrl}}/conversations/{conversation-id}/remove_participant/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "user_id": "user-uuid"
+}
+
+### Archive Conversation
+POST {{baseUrl}}/conversations/{conversation-id}/archive/
+Authorization: Bearer {{token}}
+
+### Mute Conversation
+POST {{baseUrl}}/conversations/{conversation-id}/mute/
+Authorization: Bearer {{token}}
+
+### List Messages
+GET {{baseUrl}}/messages/
+Authorization: Bearer {{token}}
+
+### Send Message
+POST {{baseUrl}}/messages/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "conversation": "conversation-uuid",
+  "message_type": "text",
+  "content": "Hello! How are you?"
+}
+
+### Get Message Details
+GET {{baseUrl}}/messages/{message-id}/
+Authorization: Bearer {{token}}
+
+### Mark Message as Read
+POST {{baseUrl}}/messages/{message-id}/mark_as_read/
+Authorization: Bearer {{token}}
+
+### Edit Message
+PUT {{baseUrl}}/messages/{message-id}/edit/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "Updated message content"
+}
+
+### Delete Message
+DELETE {{baseUrl}}/messages/{message-id}/delete_message/
+Authorization: Bearer {{token}}
+
+### List Blocked Users
+GET {{baseUrl}}/blocked-users/
+Authorization: Bearer {{token}}
+
+### Block User
+POST {{baseUrl}}/blocked-users/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "blocked_user": "user-uuid",
+  "reason": "Spam messages"
+}
+
+### Unblock User
+POST {{baseUrl}}/blocked-users/{blocked-user-id}/unblock/
+Authorization: Bearer {{token}}
+
+### ============================================
+### PAYMENT ENDPOINTS
+### ============================================
+
+### List Orders
+GET {{baseUrl}}/orders/
+Authorization: Bearer {{token}}
+
+### List Orders with Filters
+GET {{baseUrl}}/orders/?status=pending&page=1
+Authorization: Bearer {{token}}
+
+### Create Order
+POST {{baseUrl}}/orders/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "order_type": "car",
+  "car_id": "car-uuid",
+  "item_name": "2020 Toyota Camry",
+  "item_description": "Well-maintained sedan",
+  "quantity": 1,
+  "unit_price": "25000.00",
+  "subtotal": "25000.00",
+  "tax_amount": "2500.00",
+  "shipping_cost": "500.00",
+  "discount_amount": "0.00",
+  "shipping_address": "123 Main St",
+  "shipping_city": "Dhaka",
+  "shipping_state": "Dhaka",
+  "shipping_postal_code": "1000",
+  "shipping_country": "Bangladesh",
+  "billing_address": "123 Main St",
+  "billing_city": "Dhaka",
+  "billing_state": "Dhaka",
+  "billing_postal_code": "1000",
+  "billing_country": "Bangladesh"
+}
+
+### Get Order Details
+GET {{baseUrl}}/orders/{order-id}/
+Authorization: Bearer {{token}}
+
+### Confirm Order
+POST {{baseUrl}}/orders/{order-id}/confirm/
+Authorization: Bearer {{token}}
+
+### Ship Order
+POST {{baseUrl}}/orders/{order-id}/ship/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tracking_number": "TRACK123456",
+  "tracking_url": "https://tracking.example.com/TRACK123456"
+}
+
+### Deliver Order
+POST {{baseUrl}}/orders/{order-id}/deliver/
+Authorization: Bearer {{token}}
+
+### Cancel Order
+POST {{baseUrl}}/orders/{order-id}/cancel/
+Authorization: Bearer {{token}}
+
+### ============================================
+### SSL COMMERZ PAYMENT ENDPOINTS
+### ============================================
+
+### Initiate SSL Commerz Payment
+POST {{baseUrl}}/payments/initiate_sslcommerz/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "order_id": "order-uuid"
+}
+
+### List Payments
+GET {{baseUrl}}/payments/
+Authorization: Bearer {{token}}
+
+### Get Payment Details
+GET {{baseUrl}}/payments/{payment-id}/
+Authorization: Bearer {{token}}
+
+### Retry Failed Payment
+POST {{baseUrl}}/payments/{payment-id}/retry/
+Authorization: Bearer {{token}}
+
+### SSL Commerz Success Callback (Automatic - DO NOT CALL MANUALLY)
+POST {{baseUrl}}/payments/sslcommerz/success/
+Content-Type: application/x-www-form-urlencoded
+
+tran_id=ORD-ABC123&val_id=VAL123&status=VALID
+
+### SSL Commerz Failure Callback (Automatic - DO NOT CALL MANUALLY)
+POST {{baseUrl}}/payments/sslcommerz/fail/
+Content-Type: application/x-www-form-urlencoded
+
+tran_id=ORD-ABC123&error_description=Payment+failed
+
+### SSL Commerz Cancellation Callback (Automatic - DO NOT CALL MANUALLY)
+POST {{baseUrl}}/payments/sslcommerz/cancel/
+Content-Type: application/x-www-form-urlencoded
+
+tran_id=ORD-ABC123
+
+### ============================================
+### INVOICE ENDPOINTS
+### ============================================
+
+### List Invoices
+GET {{baseUrl}}/invoices/
+Authorization: Bearer {{token}}
+
+### Get Invoice Details
+GET {{baseUrl}}/invoices/{invoice-id}/
+Authorization: Bearer {{token}}
+
+### Send Invoice
+POST {{baseUrl}}/invoices/{invoice-id}/send/
+Authorization: Bearer {{token}}
+
+### ============================================
+### REFUND ENDPOINTS
+### ============================================
+
+### List Refunds
+GET {{baseUrl}}/refunds/
+Authorization: Bearer {{token}}
+
+### Request Refund
+POST {{baseUrl}}/refunds/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "order": "order-uuid",
+  "payment": "payment-uuid",
+  "refund_reason": "item_defective",
+  "refund_amount": "28000.00",
+  "refund_percentage": 100,
+  "reason_description": "Item arrived damaged"
+}
+
+### Get Refund Details
+GET {{baseUrl}}/refunds/{refund-id}/
+Authorization: Bearer {{token}}
+
+### Approve Refund (Admin Only)
+POST {{baseUrl}}/refunds/{refund-id}/approve/
+Authorization: Bearer {{token}}
+
+### Complete Refund (Admin Only)
+POST {{baseUrl}}/refunds/{refund-id}/complete/
+Authorization: Bearer {{token}}
+
+### ============================================
+### WALLET ENDPOINTS
+### ============================================
+
+### Get My Wallet
+GET {{baseUrl}}/wallets/my_wallet/
+Authorization: Bearer {{token}}
+
+### Get Wallet Details
+GET {{baseUrl}}/wallets/{wallet-id}/
+Authorization: Bearer {{token}}
+
+### ============================================
+### DISCOUNT ENDPOINTS
+### ============================================
+
+### List Active Discounts
+GET {{baseUrl}}/discounts/
+Authorization: Bearer {{token}}
+
+### Validate Discount Code
+POST {{baseUrl}}/discounts/validate/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "SAVE20",
+  "order_amount": "1000.00"
+}
+
+### Apply Discount
+POST {{baseUrl}}/discounts/apply/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "discount_code": "SAVE20"
+}
+
+### ============================================
+### NOTES FOR TESTING
+### ============================================
+
+# 1. Replace {{token}} with your actual JWT token after authentication
+# 2. Replace {user-id}, {car-id}, etc. with actual UUIDs from responses
+# 3. For POST/PUT/PATCH requests, ensure Content-Type is application/json
+# 4. All endpoints require authentication (Bearer token) except /api/token/
+# 5. Admin endpoints require is_staff=True
+# 6. Test in order: Auth → Users → Cars/Parts → Orders → Payments
+# 7. For SSL Commerz testing, use sandbox credentials
+# 8. SSL Commerz callback endpoints are called automatically by the gateway
+# 9. Check response status codes:
+#    - 200: Success
+#    - 201: Created
+#    - 204: No Content (Delete)
+#    - 400: Bad Request
+#    - 401: Unauthorized
+#    - 403: Forbidden
+#    - 404: Not Found
+#    - 500: Server Error
+
+### ============================================
+### QUICK TESTING WORKFLOW
+### ============================================
+
+# 1. Get Token
+#    POST /api/token/ with email and password
+#    Copy the "access" token from response
+
+# 2. Update @token variable at top of file with the access token
+
+# 3. Create Order
+#    POST /api/orders/ with order details
+#    Note the order ID from response
+
+# 4. Initiate Payment
+#    POST /api/payments/initiate_sslcommerz/ with order_id
+#    Copy gateway_url from response
+
+# 5. Complete Payment
+#    Open gateway_url in browser to complete payment
+#    SSL Commerz will call success/fail callback automatically
+
+# 6. Check Order Status
+#    GET /api/orders/{order-id}/ should show status=confirmed
+
+# 7. View Payment
+#    GET /api/payments/ to see payment details
+
+# 8. Request Refund (if needed)
+#    POST /api/refunds/ with refund details
+
+# 9. Approve Refund (Admin)
+#    POST /api/refunds/{refund-id}/approve/
+
+# 10. Complete Refund (Admin)
+#     POST /api/refunds/{refund-id}/complete/

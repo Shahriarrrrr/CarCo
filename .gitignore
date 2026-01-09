@@ -1,4 +1,19 @@
 users/__pycache__/
 __pycache__/
+
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 myenv/
 myenv
+SSLCOMMERZ_INTEGRATION.md
+IMPLEMENTATION_COMPLETE.md
+FEATURES_1_2_SUMMARY.md
+.env
+.env.local
+
+

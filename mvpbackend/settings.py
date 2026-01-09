@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1%cyjg84ar3(umg2s9p8d*#g+*2ta)q6yexe49!xwma2e&=pei'
+# In production, use environment variables
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-1%cyjg84ar3(umg2s9p8d*#g+*2ta)q6yexe49!xwma2e&=pei')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -38,6 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'cars',
+    'parts',
+    'forum',
+    'comments',
+    'ratings',
+    'notifications',
+    'messaging',
+    'payments',
     'rest_framework',
 ]
 
@@ -127,3 +138,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
 }
+
+# SSL Commerz Payment Gateway Configuration
+SSLCOMMERZ_STORE_ID = os.environ.get('SSLCOMMERZ_STORE_ID', 'dmsrf680a241076e9d')
+SSLCOMMERZ_STORE_PASSWD = os.environ.get('SSLCOMMERZ_STORE_PASSWD', 'dmsrf680a241076e9d@ssl')
+SSLCOMMERZ_IS_SANDBOX = os.environ.get('SSLCOMMERZ_IS_SANDBOX', 'True') == 'True'
+
+# SSL Commerz Callback URLs
+SSLCOMMERZ_SUCCESS_URL = os.environ.get('SSLCOMMERZ_SUCCESS_URL', 'http://localhost:8000/api/payments/sslcommerz/success/')
+SSLCOMMERZ_FAIL_URL = os.environ.get('SSLCOMMERZ_FAIL_URL', 'http://localhost:8000/api/payments/sslcommerz/fail/')
+SSLCOMMERZ_CANCEL_URL = os.environ.get('SSLCOMMERZ_CANCEL_URL', 'http://localhost:8000/api/payments/sslcommerz/cancel/')
