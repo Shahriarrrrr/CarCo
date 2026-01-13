@@ -3,7 +3,7 @@
 ### Replace {token}, {id}, {user-id}, etc. with actual values
 
 @baseUrl = http://localhost:8000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY3ODY2MDM3LCJpYXQiOjE3Njc4NjU3MzcsImp0aSI6ImExYjgyMzBmM2FkMjQxYThhZmJjYTU0ZjU4MWEyMzBjIiwidXNlcl9pZCI6IjNlNzA5N2RhLTFmNjktNGQ2Yi1hY2MyLTY0ODZhZTVjYzg1MiJ9.tQJqOzhiAR3OpfmLVTeB2t3X3Ccf9OI1X4lnkgGMLGw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4MTUwNzkxLCJpYXQiOjE3NjgxNTA0OTEsImp0aSI6IjRkYjI3ZTQ2OTYwYTQ1NjY4MmM4NDQzMzFhYzc2NTQxIiwidXNlcl9pZCI6IjNlNzA5N2RhLTFmNjktNGQ2Yi1hY2MyLTY0ODZhZTVjYzg1MiJ9.9zHfr0onU2MfBQHtBD1MzqdCrOihKk7nKmjUd3OlZbA
 
 ### ============================================
 ### AUTHENTICATION ENDPOINTS
@@ -107,15 +107,15 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "make": "Toyota",
-  "model": "Camry",
-  "year": 2020,
+  "make": "Volkswagen",
+  "model": "Passat",
+  "year": 2025,
   "mileage": 45000,
   "transmission": "automatic",
   "fuel_type": "petrol",
   "condition": "good",
   "price": "25000.00",
-  "title": "2020 Toyota Camry - Excellent Condition",
+  "title": "2025 Volkswagen Passat - Excellent Condition",
   "description": "Well-maintained, single owner, full service history",
   "city": "Dhaka",
   "state_province": "Dhaka",
@@ -592,8 +592,8 @@ Content-Type: application/json
 
 {
   "order_type": "car",
-  "car_id": "car-uuid",
-  "item_name": "2020 Toyota Camry",
+  "car_id": "0d194053-13ce-4e31-888f-546c72a8b8aa",
+  "item_name": "2025 Volkswagen Passat",
   "item_description": "Well-maintained sedan",
   "quantity": 1,
   "unit_price": "25000.00",
@@ -614,7 +614,7 @@ Content-Type: application/json
 }
 
 ### Get Order Details
-GET {{baseUrl}}/orders/{order-id}/
+GET {{baseUrl}}/orders/13df13a1-26ec-4ba7-b775-1c172819e96e/
 Authorization: Bearer {{token}}
 
 ### Confirm Order
@@ -649,7 +649,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "order_id": "order-uuid"
+  "order_id": "13df13a1-26ec-4ba7-b775-1c172819e96e"
 }
 
 ### List Payments
