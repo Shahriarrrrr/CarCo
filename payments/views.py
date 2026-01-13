@@ -5,6 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.db import models
 from payments.models import (
     Order, Payment, Invoice, Refund, Wallet, WalletTransaction, Discount
 )
