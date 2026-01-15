@@ -58,7 +58,7 @@ class PartListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'seller', 'category', 'name', 'brand', 'price',
             'condition', 'quantity_in_stock', 'status', 'rating',
-            'reviews_count', 'created_at', 'primary_image'
+            'reviews_count', 'is_featured', 'created_at', 'primary_image'
         ]
         read_only_fields = ['id', 'created_at', 'status', 'rating', 'reviews_count']
     

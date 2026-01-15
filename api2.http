@@ -3,8 +3,7 @@
 ### Replace {token}, {id}, {user-id}, etc. with actual values
 
 @baseUrl = http://localhost:8000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4MTUwNzkxLCJpYXQiOjE3NjgxNTA0OTEsImp0aSI6IjRkYjI3ZTQ2OTYwYTQ1NjY4MmM4NDQzMzFhYzc2NTQxIiwidXNlcl9pZCI6IjNlNzA5N2RhLTFmNjktNGQ2Yi1hY2MyLTY0ODZhZTVjYzg1MiJ9.9zHfr0onU2MfBQHtBD1MzqdCrOihKk7nKmjUd3OlZbA
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4NDk1NDEzLCJpYXQiOjE3Njg0OTUxMTMsImp0aSI6IjI4Yjk2N2ViYWNjMjRhZjQ5MzgzMDgwMTQ0YzNlYTcwIiwidXNlcl9pZCI6IjY5NDY2MmQ1LWIxYzgtNGQxMS05ZDljLWMwNGM4YThlOTg4NCJ9.G0tR6mad8zqrT2uCu6uSi2Y_1CgaBZFJFHqacE7ai_o
 ### ============================================
 ### AUTHENTICATION ENDPOINTS
 ### ============================================
@@ -14,8 +13,8 @@ POST http://localhost:8000/api/token/
 Content-Type: application/json
 
 {
-  "email": "unique_user_jan8_2026_141h32m@testmail.com",
-  "password": "1234@Shahriar"
+  "email": "khanshahriar23@gmail.com",
+  "password": "@Shahriar1"
 }
 
 ### Refresh JWT Token
@@ -52,11 +51,11 @@ POST {{baseUrl}}/users/register/
 Content-Type: application/json
 
 {
-  "email": "register_user_jan8_2026@testmail.com",
-  "password": "1234",
-  "password2": "1234",
-  "first_name": "Register",
-  "last_name": "User",
+  "email": "khanshahriar23@gmail.com",
+  "password": "@Shahriar1",
+  "password2": "@Shahriar1",
+  "first_name": "Shahriar",
+  "last_name": "Azam Khan",
   "user_type": "individual"
 }
 
@@ -75,6 +74,10 @@ Content-Type: application/json
   "bio": "Car enthusiast",
   "phone_number": "+8801700000000"
 }
+
+###
+GET http://localhost:8000/api/users/me/
+Authorization: Bearer {{token}}
 
 ### Update User (Partial)
 PATCH {{baseUrl}}/users/{user-id}/
