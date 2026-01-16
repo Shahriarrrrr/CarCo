@@ -65,9 +65,12 @@ class CarPartViewSet(viewsets.ModelViewSet):
         
         # Non-staff users only see active parts or their own
         if not self.request.user.is_staff:
-            queryset = queryset.filter(
-                Q(status='active') | Q(seller=self.request.user)
-            )
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(
+                    Q(status='active') | Q(seller=self.request.user)
+                )
+            else:
+                queryset = queryset.filter(status='active')
         
         return queryset.select_related('seller', 'category').prefetch_related('images', 'compatibilities')
     
