@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.db import models
 from users.api.serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
@@ -61,13 +62,42 @@ class UserViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
     
     def get_queryset(self):
-        """Filter queryset based on user permissions."""
-        if self.request.user.is_staff:
-            return CustomUser.objects.all()
-        # Regular users can only see verified sellers and themselves
-        return CustomUser.objects.filter(
-            models.Q(verification_status='verified') | models.Q(id=self.request.user.id)
-        )
+        """Filter queryset based on user permissions and query parameters."""
+        queryset = CustomUser.objects.all()
+        
+        # Base filtering for non-staff users
+        if not self.request.user.is_staff:
+            # Regular users can only see verified sellers and themselves
+            queryset = queryset.filter(
+                models.Q(verification_status='verified') | models.Q(id=self.request.user.id)
+            )
+        
+        # Filter by verification status (available to all users)
+        verification_status = self.request.query_params.get('verification_status')
+        if verification_status:
+            queryset = queryset.filter(verification_status=verification_status)
+        
+        # Filter by user type
+        user_type = self.request.query_params.get('user_type')
+        if user_type:
+            queryset = queryset.filter(user_type=user_type)
+        
+        # Filter by seller status
+        is_seller = self.request.query_params.get('is_seller')
+        if is_seller is not None:
+            queryset = queryset.filter(is_seller=is_seller.lower() in ['true', '1'])
+        
+        # Filter by email verification
+        email_verified = self.request.query_params.get('email_verified')
+        if email_verified is not None:
+            queryset = queryset.filter(email_verified=email_verified.lower() in ['true', '1'])
+        
+        # Filter by phone verification
+        phone_verified = self.request.query_params.get('phone_verified')
+        if phone_verified is not None:
+            queryset = queryset.filter(phone_verified=phone_verified.lower() in ['true', '1'])
+        
+        return queryset
     
     def create(self, request, *args, **kwargs):
         """Create a new user account."""

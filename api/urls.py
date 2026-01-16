@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from users.api.views import UserViewSet
 from cars.views import CarViewSet
-from parts.views import CarPartViewSet, PartCategoryViewSet, CompanyStoreViewSet
+from parts.views import CarPartViewSet, PartCategoryViewSet, CompanyStoreViewSet, PartReviewViewSet
 from forum.views import ForumThreadViewSet, ForumResponseViewSet, ExpertVerificationViewSet, ForumCategoryViewSet
 from comments.views import CommentViewSet, CommentReplyViewSet
 from ratings.views import ReviewViewSet, SellerRatingViewSet
@@ -23,6 +23,7 @@ router.register(r'cars', CarViewSet, basename='car')
 router.register(r'parts', CarPartViewSet, basename='part')
 router.register(r'part-categories', PartCategoryViewSet, basename='part-category')
 router.register(r'company-stores', CompanyStoreViewSet, basename='company-store')
+router.register(r'part-reviews', PartReviewViewSet, basename='part-review')
 
 # Forum
 router.register(r'forum/categories', ForumCategoryViewSet, basename='forum-category')

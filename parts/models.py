@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 import uuid
 from users.models import CustomUser
@@ -211,3 +211,193 @@ class PartCompatibility(models.Model):
     
     def __str__(self):
         return f"{self.part.name} - {self.car_year_from}-{self.car_year_to} {self.car_make} {self.car_model}"
+
+
+class PartReview(models.Model):
+    """
+    Reviews for individual car parts.
+    """
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    reviewer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='part_reviews_given')
+    part = models.ForeignKey(CarPart, on_delete=models.CASCADE, related_name='reviews')
+    
+    # Review content
+    title = models.CharField(max_length=255)
+    text = models.TextField()
+    
+    # Rating
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        db_index=True
+    )
+    
+    # Aspect ratings for parts
+    quality_rating = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Quality of the part"
+    )
+    value_rating = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Value for money"
+    )
+    fitment_rating = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="How well it fits"
+    )
+    
+    # Verification
+    is_verified_purchase = models.BooleanField(default=False)
+    
+    # Engagement
+    helpful_count = models.IntegerField(default=0)
+    unhelpful_count = models.IntegerField(default=0)
+    
+    # Moderation
+    is_approved = models.BooleanField(default=True)
+    is_flagged = models.BooleanField(default=False)
+    flag_reason = models.CharField(max_length=255, null=True, blank=True)
+    
+    # Seller response
+    seller_response = models.TextField(null=True, blank=True)
+    seller_response_date = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('reviewer', 'part')
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['part', 'rating']),
+            models.Index(fields=['reviewer']),
+        ]
+    
+    def __str__(self):
+        return f"Review by {self.reviewer.get_full_name()} for {self.part.name}"
+
+
+class PartReviewHelpfulness(models.Model):
+    """
+    Track users' votes on part review helpfulness.
+    """
+    
+    VOTE_CHOICES = (
+        ('helpful', 'Helpful'),
+        ('unhelpful', 'Unhelpful'),
+    )
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    review = models.ForeignKey(PartReview, on_delete=models.CASCADE, related_name='helpfulness_votes')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='part_review_votes')
+    vote_type = models.CharField(max_length=10, choices=VOTE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('review', 'user')
+        verbose_name_plural = "Part Review Helpfulness Votes"
+    
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.vote_type} on {self.review}"
+
+
+class PartReview(models.Model):
+    """
+    Reviews for individual car parts.
+    """
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    reviewer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='part_reviews_given')
+    part = models.ForeignKey(CarPart, on_delete=models.CASCADE, related_name='reviews')
+    
+    # Review content
+    title = models.CharField(max_length=255)
+    text = models.TextField()
+    
+    # Rating
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        db_index=True
+    )
+    
+    # Aspect ratings for parts
+    quality_rating = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Quality of the part"
+    )
+    value_rating = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Value for money"
+    )
+    fitment_rating = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="How well it fits"
+    )
+    
+    # Verification
+    is_verified_purchase = models.BooleanField(default=False)
+    
+    # Engagement
+    helpful_count = models.IntegerField(default=0)
+    unhelpful_count = models.IntegerField(default=0)
+    
+    # Moderation
+    is_approved = models.BooleanField(default=True)
+    is_flagged = models.BooleanField(default=False)
+    flag_reason = models.CharField(max_length=255, null=True, blank=True)
+    
+    # Seller response
+    seller_response = models.TextField(null=True, blank=True)
+    seller_response_date = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('reviewer', 'part')
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['part', 'rating']),
+            models.Index(fields=['reviewer']),
+        ]
+    
+    def __str__(self):
+        return f"Review by {self.reviewer.get_full_name()} for {self.part.name}"
+
+
+class PartReviewHelpfulness(models.Model):
+    """
+    Track users' votes on part review helpfulness.
+    """
+    
+    VOTE_CHOICES = (
+        ('helpful', 'Helpful'),
+        ('unhelpful', 'Unhelpful'),
+    )
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    review = models.ForeignKey(PartReview, on_delete=models.CASCADE, related_name='helpfulness_votes')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='part_review_votes')
+    vote_type = models.CharField(max_length=10, choices=VOTE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('review', 'user')
+        verbose_name_plural = "Part Review Helpfulness Votes"
+    
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.vote_type} on {self.review}"

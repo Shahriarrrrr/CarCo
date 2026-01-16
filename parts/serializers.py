@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from parts.models import CarPart, PartImage, PartCategory, PartCompatibility, CompanyStore
+from parts.models import CarPart, PartImage, PartCategory, PartCompatibility, CompanyStore, PartReview, PartReviewHelpfulness
 from users.api.serializers import UserListSerializer
 
 
@@ -118,3 +118,62 @@ class PartSearchSerializer(serializers.Serializer):
     price_to = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     in_stock_only = serializers.BooleanField(required=False, default=False)
     search = serializers.CharField(required=False, allow_blank=True)
+
+
+class PartReviewHelpfulnessSerializer(serializers.ModelSerializer):
+    """Serializer for part review helpfulness votes."""
+    
+    class Meta:
+        model = PartReviewHelpfulness
+        fields = ['id', 'vote_type', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
+class PartReviewSerializer(serializers.ModelSerializer):
+    """Serializer for part reviews."""
+    
+    reviewer = UserListSerializer(read_only=True)
+    user_vote = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = PartReview
+        fields = [
+            'id', 'reviewer', 'part', 'title', 'text', 'rating',
+            'quality_rating', 'value_rating', 'fitment_rating',
+            'is_verified_purchase', 'helpful_count', 'unhelpful_count',
+            'is_approved', 'is_flagged', 'seller_response',
+            'seller_response_date', 'created_at', 'updated_at', 'user_vote'
+        ]
+        read_only_fields = [
+            'id', 'reviewer', 'helpful_count', 'unhelpful_count',
+            'is_approved', 'is_flagged', 'seller_response',
+            'seller_response_date', 'created_at', 'updated_at'
+        ]
+    
+    def get_user_vote(self, obj):
+        """Get current user's vote on this review."""
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return None
+        
+        vote = obj.helpfulness_votes.filter(user=request.user).first()
+        if vote:
+            return vote.vote_type
+        return None
+
+
+class PartReviewCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating part reviews."""
+    
+    class Meta:
+        model = PartReview
+        fields = [
+            'title', 'text', 'rating', 'quality_rating',
+            'value_rating', 'fitment_rating'
+        ]
+    
+    def create(self, validated_data):
+        """Create review with reviewer from request user."""
+        validated_data['reviewer'] = self.context['request'].user
+        validated_data['part'] = self.context['part']
+        return super().create(validated_data)

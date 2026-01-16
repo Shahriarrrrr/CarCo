@@ -1,5 +1,5 @@
 from django.contrib import admin
-from parts.models import CarPart, PartImage, PartCategory, PartCompatibility, CompanyStore
+from parts.models import CarPart, PartImage, PartCategory, PartCompatibility, CompanyStore, PartReview, PartReviewHelpfulness
 
 
 @admin.register(PartCategory)
@@ -62,3 +62,42 @@ class CompanyStoreAdmin(admin.ModelAdmin):
     list_filter = ['is_verified', 'is_active', 'created_at']
     search_fields = ['store_name', 'company__email']
     readonly_fields = ['id', 'created_at', 'updated_at']
+
+
+@admin.register(PartReview)
+class PartReviewAdmin(admin.ModelAdmin):
+    list_display = ['part', 'reviewer', 'rating', 'is_verified_purchase', 'is_approved', 'created_at']
+    list_filter = ['rating', 'is_verified_purchase', 'is_approved', 'is_flagged', 'created_at']
+    search_fields = ['part__name', 'reviewer__email', 'title', 'text']
+    readonly_fields = ['id', 'helpful_count', 'unhelpful_count', 'created_at', 'updated_at']
+    fieldsets = (
+        ('Review Information', {
+            'fields': ('id', 'reviewer', 'part', 'title', 'text')
+        }),
+        ('Ratings', {
+            'fields': ('rating', 'quality_rating', 'value_rating', 'fitment_rating')
+        }),
+        ('Verification', {
+            'fields': ('is_verified_purchase',)
+        }),
+        ('Engagement', {
+            'fields': ('helpful_count', 'unhelpful_count')
+        }),
+        ('Moderation', {
+            'fields': ('is_approved', 'is_flagged', 'flag_reason')
+        }),
+        ('Seller Response', {
+            'fields': ('seller_response', 'seller_response_date')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
+    )
+
+
+@admin.register(PartReviewHelpfulness)
+class PartReviewHelpfulnessAdmin(admin.ModelAdmin):
+    list_display = ['review', 'user', 'vote_type', 'created_at']
+    list_filter = ['vote_type', 'created_at']
+    search_fields = ['review__part__name', 'user__email']
+    readonly_fields = ['id', 'created_at']

@@ -33,6 +33,34 @@ Content-Type: application/json
 GET {{baseUrl}}/users/
 Authorization: Bearer {{token}}
 
+### List Verified Users
+GET {{baseUrl}}/users/?verification_status=verified
+Authorization: Bearer {{token}}
+
+### List Pending Verification Users (Admin can see all, regular users see none due to base filter)
+GET {{baseUrl}}/users/?verification_status=pending
+Authorization: Bearer {{token}}
+
+### List Users by Type
+GET {{baseUrl}}/users/?user_type=company
+Authorization: Bearer {{token}}
+
+### List Sellers Only
+GET {{baseUrl}}/users/?is_seller=true
+Authorization: Bearer {{token}}
+
+### List Email Verified Users
+GET {{baseUrl}}/users/?email_verified=true
+Authorization: Bearer {{token}}
+
+### List Phone Verified Users
+GET {{baseUrl}}/users/?phone_verified=true
+Authorization: Bearer {{token}}
+
+### List Verified Company Sellers (Combined Filters)
+GET {{baseUrl}}/users/?user_type=company&is_seller=true&verification_status=verified
+Authorization: Bearer {{token}}
+
 ### Create New User (Standard Endpoint)
 POST {{baseUrl}}/users/
 Content-Type: application/json
@@ -240,6 +268,88 @@ Content-Type: application/json
   "store_city": "Dhaka",
   "store_state": "Dhaka",
   "store_country": "Bangladesh"
+}
+
+### ============================================
+### PART REVIEWS ENDPOINTS
+### ============================================
+
+### List All Part Reviews
+GET {{baseUrl}}/part-reviews/
+Authorization: Bearer {{token}}
+
+### List Reviews for Specific Part
+GET {{baseUrl}}/part-reviews/?part_id={part-id}
+Authorization: Bearer {{token}}
+
+### List Only Verified Purchase Reviews
+GET {{baseUrl}}/part-reviews/?is_verified_purchase=true
+Authorization: Bearer {{token}}
+
+### List Reviews by Rating
+GET {{baseUrl}}/part-reviews/?rating=5
+Authorization: Bearer {{token}}
+
+### List Reviews with Minimum Rating
+GET {{baseUrl}}/part-reviews/?min_rating=4
+Authorization: Bearer {{token}}
+
+### List Verified Reviews for Specific Part
+GET {{baseUrl}}/part-reviews/?part_id={part-id}&is_verified_purchase=true
+Authorization: Bearer {{token}}
+
+### Create Part Review
+POST {{baseUrl}}/part-reviews/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "part_id": "part-uuid",
+  "title": "Great quality brake pads",
+  "text": "These brake pads work perfectly and are very durable. Highly recommended!",
+  "rating": 5,
+  "quality_rating": 5,
+  "value_rating": 4,
+  "fitment_rating": 5
+}
+
+### Get Part Review Details
+GET {{baseUrl}}/part-reviews/{review-id}/
+Authorization: Bearer {{token}}
+
+### Update Part Review
+PATCH {{baseUrl}}/part-reviews/{review-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "text": "Updated review: Good quality but slightly overpriced"
+}
+
+### Delete Part Review
+DELETE {{baseUrl}}/part-reviews/{review-id}/
+Authorization: Bearer {{token}}
+
+### Vote Review as Helpful
+POST {{baseUrl}}/part-reviews/{review-id}/vote_helpful/
+Authorization: Bearer {{token}}
+
+### Vote Review as Unhelpful
+POST {{baseUrl}}/part-reviews/{review-id}/vote_unhelpful/
+Authorization: Bearer {{token}}
+
+### Remove Vote from Review
+DELETE {{baseUrl}}/part-reviews/{review-id}/remove_vote/
+Authorization: Bearer {{token}}
+
+### Seller Response to Review
+POST {{baseUrl}}/part-reviews/{review-id}/seller_respond/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "response": "Thank you for your review! We're glad you're satisfied with the product."
 }
 
 ### ============================================
