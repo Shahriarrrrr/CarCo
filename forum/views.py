@@ -125,11 +125,7 @@ class ForumThreadViewSet(viewsets.ModelViewSet):
             context={'request': request, 'thread': thread}
         )
         serializer.is_valid(raise_exception=True)
-        response = serializer.save()
-        
-        # Update response count
-        thread.responses_count += 1
-        thread.save(update_fields=['responses_count'])
+        response = serializer.save()  # Signal will update thread.responses_count automatically
         
         return Response(
             ForumResponseSerializer(response).data,
@@ -225,30 +221,46 @@ class ForumResponseViewSet(viewsets.ModelViewSet):
             defaults={'vote_type': vote_type}
         )
         
-        # Update vote if it exists
-        if not created:
-            old_vote_type = vote.vote_type
+        # If vote exists and is different, update it
+        if not created and vote.vote_type != vote_type:
             vote.vote_type = vote_type
-            vote.save()
-            
-            # Update counts
-            if old_vote_type == 'helpful':
-                response.helpful_count -= 1
-            else:
-                response.unhelpful_count -= 1
+            vote.save()  # Signal will update counts automatically
         
-        # Update counts
-        if vote_type == 'helpful':
-            response.helpful_count += 1
-        else:
-            response.unhelpful_count += 1
-        
-        response.save()
+        # Refresh response to get updated counts from signal
+        response.refresh_from_db()
         
         return Response(
-            {'message': 'Vote recorded', 'response': ForumResponseSerializer(response).data},
+            {
+                'message': 'Vote recorded' if created else 'Vote updated',
+                'response': ForumResponseSerializer(response, context={'request': request}).data
+            },
             status=status.HTTP_200_OK
         )
+    
+    @action(detail=True, methods=['delete'])
+    def remove_vote(self, request, pk=None):
+        """Remove vote from response."""
+        response = self.get_object()
+        
+        try:
+            vote = ResponseVote.objects.get(response=response, user=request.user)
+            vote.delete()  # Signal will update counts automatically
+            
+            # Refresh response to get updated counts
+            response.refresh_from_db()
+            
+            return Response(
+                {
+                    'message': 'Vote removed',
+                    'response': ForumResponseSerializer(response, context={'request': request}).data
+                },
+                status=status.HTTP_200_OK
+            )
+        except ResponseVote.DoesNotExist:
+            return Response(
+                {'error': 'Vote not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
     
     @action(detail=False, methods=['get'])
     def my_responses(self, request):
