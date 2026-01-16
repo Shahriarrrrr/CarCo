@@ -13,8 +13,8 @@ POST http://localhost:8000/api/token/
 Content-Type: application/json
 
 {
-  "email": "khanshahriar23@gmail.com",
-  "password": "@Shahriar1"
+  "email": "buyer1@example.com",
+  "password": "password123"
 }
 
 ### Refresh JWT Token
