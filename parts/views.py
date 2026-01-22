@@ -83,11 +83,16 @@ class CarPartViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        # Handle images from FILES if present
-        data = request.data.copy()
+        # Extract images from FILES
         images = request.FILES.getlist('images')
+        
+        # Create mutable copy of data and remove status if present (auto-set to pending)
+        data = request.data.copy()
+        data.pop('status', None)  # Remove status - it's set automatically
+        
+        # Add images to data if present
         if images:
-            data['images'] = images
+            data.setlist('images', images)
         
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)

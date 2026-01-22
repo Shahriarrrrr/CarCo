@@ -182,15 +182,15 @@ SSLCOMMERZ_IS_SANDBOX = os.environ.get('SSLCOMMERZ_IS_SANDBOX', 'True') == 'True
 
 SSLCOMMERZ_SUCCESS_URL = os.environ.get(
     'SSLCOMMERZ_SUCCESS_URL',
-    'http://localhost:8000/api/payments/sslcommerz/success/'
+    'http://localhost:3000/payment/success'
 )
 
 SSLCOMMERZ_FAIL_URL = os.environ.get(
     'SSLCOMMERZ_FAIL_URL',
-    'http://localhost:8000/api/payments/sslcommerz/fail/'
+    'http://localhost:3000/payment/failure'
 )
 
 SSLCOMMERZ_CANCEL_URL = os.environ.get(
     'SSLCOMMERZ_CANCEL_URL',
-    'http://localhost:8000/api/payments/sslcommerz/cancel/'
+    'http://localhost:3000/payment/cancel'
 )

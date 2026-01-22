@@ -47,6 +47,11 @@ class SSLCommerczPaymentGateway:
             dict: Response containing payment gateway URL or error
         """
         try:
+            # Get customer name with fallback
+            cus_name = order.buyer.get_full_name() if hasattr(order.buyer, 'get_full_name') else 'Customer'
+            if not cus_name or cus_name.strip() == '':
+                cus_name = order.buyer.username or order.buyer.email.split('@')[0] if order.buyer.email else 'Customer'
+            
             # Prepare payment data
             payload = {
                 'store_id': self.store_id,
@@ -58,9 +63,9 @@ class SSLCommerczPaymentGateway:
                 'fail_url': settings.SSLCOMMERZ_FAIL_URL,
                 'cancel_url': settings.SSLCOMMERZ_CANCEL_URL,
                 'emi_option': 0,
-                'cus_name': order.buyer.get_full_name(),
-                'cus_email': order.buyer.email,
-                'cus_phone': order.buyer.phone_number or '01700000000',
+                'cus_name': cus_name,
+                'cus_email': order.buyer.email or 'customer@example.com',
+                'cus_phone': getattr(order.buyer, 'phone_number', None) or '01700000000',
                 'cus_add1': order.shipping_address,
                 'cus_city': order.shipping_city,
                 'cus_state': order.shipping_state,

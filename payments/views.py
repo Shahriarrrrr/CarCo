@@ -254,38 +254,57 @@ class PaymentViewSet(viewsets.ModelViewSet):
             order = Order.objects.get(id=order_id, buyer=request.user)
         except Order.DoesNotExist:
             return Response(
-                {'detail': 'Order not found'},
+                {'success': False, 'detail': 'Order not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            return Response(
+                {'success': False, 'error': str(e), 'message': 'Error finding order'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         
-        # Create payment record
-        payment, created = Payment.objects.get_or_create(
-            order=order,
-            defaults={
-                'payment_method': 'sslcommerz',
-                'amount': order.total_amount,
-                'currency': 'BDT',
-                'status': 'pending'
-            }
-        )
-        
-        # Initialize SSL Commerz gateway
-        gateway = SSLCommerczPaymentGateway(is_sandbox=True)
-        result = gateway.initiate_payment(order)
-        
-        if result['success']:
-            return Response({
-                'success': True,
-                'gateway_url': result['gateway_url'],
-                'session_id': result['session_id'],
-                'message': 'Payment session initiated'
-            })
-        else:
+        try:
+            # Create payment record
+            import uuid
+            transaction_id = f"TXN-{uuid.uuid4().hex[:12].upper()}"
+            
+            payment, created = Payment.objects.get_or_create(
+                order=order,
+                defaults={
+                    'payment_method': 'sslcommerz',
+                    'amount': order.total_amount,
+                    'currency': 'BDT',
+                    'status': 'pending',
+                    'transaction_id': transaction_id
+                }
+            )
+            
+            # Initialize SSL Commerz gateway
+            gateway = SSLCommerczPaymentGateway(is_sandbox=True)
+            result = gateway.initiate_payment(order)
+            
+            if result['success']:
+                return Response({
+                    'success': True,
+                    'gateway_url': result['gateway_url'],
+                    'session_id': result['session_id'],
+                    'message': 'Payment session initiated'
+                })
+            else:
+                return Response({
+                    'success': False,
+                    'error': result.get('error', 'Unknown error'),
+                    'message': result.get('message', 'Payment initiation failed')
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"SSLCommerz Error: {error_trace}")
             return Response({
                 'success': False,
-                'error': result['error'],
-                'message': result['message']
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'error': str(e),
+                'message': 'Error initiating payment'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class InvoiceViewSet(viewsets.ReadOnlyModelViewSet):
