@@ -168,6 +168,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # ==============================
+# Media Files (User Uploads)
+# ==============================
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# ==============================
 # SSLCommerz Payment Gateway
 # ==============================
 SSLCOMMERZ_STORE_ID = os.environ.get('SSLCOMMERZ_STORE_ID', 'dmsrf680a241076e9d')

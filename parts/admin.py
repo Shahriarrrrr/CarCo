@@ -9,12 +9,28 @@ class PartCategoryAdmin(admin.ModelAdmin):
     readonly_fields = ['id', 'created_at', 'updated_at']
 
 
+class PartImageInline(admin.TabularInline):
+    """Inline admin for part images."""
+    model = PartImage
+    extra = 1
+    fields = ['image', 'is_primary', 'uploaded_at']
+    readonly_fields = ['uploaded_at']
+
+
+class PartCompatibilityInline(admin.TabularInline):
+    """Inline admin for part compatibility."""
+    model = PartCompatibility
+    extra = 1
+    fields = ['car_make', 'car_model', 'car_year_from', 'car_year_to', 'notes']
+
+
 @admin.register(CarPart)
 class CarPartAdmin(admin.ModelAdmin):
     list_display = ['name', 'brand', 'price', 'seller', 'status', 'quantity_in_stock', 'created_at']
     list_filter = ['status', 'condition', 'category', 'created_at']
     search_fields = ['name', 'brand', 'part_number', 'seller__email']
     readonly_fields = ['id', 'created_at', 'updated_at', 'quantity_sold', 'rating', 'reviews_count']
+    inlines = [PartImageInline, PartCompatibilityInline]
     fieldsets = (
         ('Basic Information', {
             'fields': ('id', 'seller', 'category', 'name', 'description', 'part_number')

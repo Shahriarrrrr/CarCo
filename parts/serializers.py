@@ -93,18 +93,36 @@ class PartDetailSerializer(serializers.ModelSerializer):
 class PartCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating parts."""
     
+    images = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True,
+        required=False,
+        allow_empty=True
+    )
+    
     class Meta:
         model = CarPart
         fields = [
             'category', 'name', 'description', 'part_number', 'condition',
             'brand', 'model', 'price', 'quantity_in_stock', 'warranty_months',
-            'warranty_description', 'weight', 'dimensions'
+            'warranty_description', 'weight', 'dimensions', 'images'
         ]
     
     def create(self, validated_data):
-        """Create part with seller from request user."""
+        """Create part with seller from request user and handle images."""
+        images_data = validated_data.pop('images', [])
         validated_data['seller'] = self.context['request'].user
-        return super().create(validated_data)
+        part = super().create(validated_data)
+        
+        # Create images if provided
+        for idx, image in enumerate(images_data):
+            PartImage.objects.create(
+                part=part,
+                image=image,
+                is_primary=(idx == 0)  # First image is primary
+            )
+        
+        return part
 
 
 class PartSearchSerializer(serializers.Serializer):

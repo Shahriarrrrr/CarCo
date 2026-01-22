@@ -76,14 +76,20 @@ class CarPartViewSet(viewsets.ModelViewSet):
         return queryset.select_related('seller', 'category').prefetch_related('images', 'compatibilities')
     
     def create(self, request, *args, **kwargs):
-        """Create a new part listing."""
+        """Create a new part listing with optional images."""
         if not request.user.is_seller:
             return Response(
                 {'error': 'Only sellers can create part listings'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        serializer = self.get_serializer(data=request.data)
+        # Handle images from FILES if present
+        data = request.data.copy()
+        images = request.FILES.getlist('images')
+        if images:
+            data['images'] = images
+        
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         
