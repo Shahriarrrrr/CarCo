@@ -95,6 +95,13 @@ class CustomUser(AbstractUser):
     company_registration_number = models.CharField(max_length=100, null=True, blank=True, unique=True)
     company_website = models.URLField(null=True, blank=True)
     business_email = models.EmailField(null=True, blank=True, help_text='Business contact email')
+    business_phone_number = models.CharField(
+        validators=[phone_regex],
+        max_length=17,
+        null=True,
+        blank=True,
+        help_text='Business contact phone number'
+    )
     e_tin = models.CharField(max_length=50, null=True, blank=True, help_text='Electronic Tax Identification Number')
     trade_license_number = models.CharField(max_length=100, null=True, blank=True, help_text='Trade License Number')
     nid_number = models.CharField(max_length=50, null=True, blank=True, help_text='National ID Number')
