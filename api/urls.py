@@ -9,6 +9,7 @@ from ratings.views import ReviewViewSet, SellerRatingViewSet
 from notifications.views import NotificationViewSet, NotificationPreferenceViewSet
 from messaging.views import ConversationViewSet, MessageViewSet, BlockedUserViewSet
 from payments.views import OrderViewSet, PaymentViewSet, InvoiceViewSet, RefundViewSet, WalletViewSet, DiscountViewSet
+from locations.views import ShopLocationViewSet
 
 # Create unified router and register all viewsets
 router = DefaultRouter()
@@ -55,6 +56,9 @@ router.register(r'invoices', InvoiceViewSet, basename='invoice')
 router.register(r'refunds', RefundViewSet, basename='refund')
 router.register(r'wallets', WalletViewSet, basename='wallet')
 router.register(r'discounts', DiscountViewSet, basename='discount')
+
+# Locations
+router.register(r'shop-locations', ShopLocationViewSet, basename='shop-location')
 
 urlpatterns = [
     path('', include(router.urls)),

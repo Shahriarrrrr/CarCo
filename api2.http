@@ -885,6 +885,165 @@ Content-Type: application/json
 }
 
 ### ============================================
+### SHOP LOCATIONS ENDPOINTS
+### ============================================
+
+### Get All Approved Locations for Public Map (No Auth Required)
+GET {{baseUrl}}/shop-locations/public_map/
+
+### Get Approved Locations Filtered by Type
+GET {{baseUrl}}/shop-locations/public_map/?type=shop
+
+### Get Approved Locations Filtered by City
+GET {{baseUrl}}/shop-locations/public_map/?city=Dhaka
+
+### List All Shop Locations (Filtered by Permissions)
+GET {{baseUrl}}/shop-locations/
+Authorization: Bearer {{token}}
+
+### List Shop Locations by Approval Status (Admin)
+GET {{baseUrl}}/shop-locations/?approval_status=pending
+Authorization: Bearer {{token}}
+
+### List Only Approved Locations
+GET {{baseUrl}}/shop-locations/?approval_status=approved
+Authorization: Bearer {{token}}
+
+### Search Shop Locations
+GET {{baseUrl}}/shop-locations/?search=Tech Store
+Authorization: Bearer {{token}}
+
+### Get My Shop Locations (Seller)
+GET {{baseUrl}}/shop-locations/my_locations/
+Authorization: Bearer {{token}}
+
+### Get Pending Approvals (Admin Only)
+GET {{baseUrl}}/shop-locations/pending_approvals/
+Authorization: Bearer {{token}}
+
+### Get Shop Location Statistics
+GET {{baseUrl}}/shop-locations/stats/
+Authorization: Bearer {{token}}
+
+### Create Shop Location Request (Seller Only)
+POST {{baseUrl}}/shop-locations/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Tech Store Downtown",
+  "location_type": "shop",
+  "description": "Premium auto parts and accessories",
+  "latitude": "23.8103",
+  "longitude": "90.4125",
+  "address": "123 Main Street",
+  "city": "Dhaka",
+  "state": "Dhaka Division",
+  "postal_code": "1000",
+  "country": "Bangladesh",
+  "phone": "+880 1234-567890",
+  "email": "store@example.com",
+  "website": "www.techstore.com",
+  "operating_hours": "9 AM - 9 PM"
+}
+
+### Create Shop Location with Image (Use multipart/form-data)
+POST {{baseUrl}}/shop-locations/
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Express Service Center
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="location_type"
+
+service
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="latitude"
+
+23.7900
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="longitude"
+
+90.4050
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="address"
+
+321 Service Road
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="city"
+
+Dhaka
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="country"
+
+Bangladesh
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="phone"
+
++880 1234-567893
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="operating_hours"
+
+9 AM - 7 PM
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="shop.jpg"
+Content-Type: image/jpeg
+
+< ./path/to/shop-image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Get Shop Location Details
+GET {{baseUrl}}/shop-locations/{location-id}/
+Authorization: Bearer {{token}}
+
+### Update Shop Location (Full)
+PUT {{baseUrl}}/shop-locations/{location-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Store Name",
+  "location_type": "shop",
+  "latitude": "23.8103",
+  "longitude": "90.4125",
+  "address": "Updated Address",
+  "city": "Dhaka",
+  "country": "Bangladesh",
+  "phone": "+880 1234-567890",
+  "operating_hours": "10 AM - 10 PM"
+}
+
+### Update Shop Location (Partial)
+PATCH {{baseUrl}}/shop-locations/{location-id}/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "operating_hours": "8 AM - 11 PM",
+  "phone": "+880 1234-567899"
+}
+
+### Delete Shop Location
+DELETE {{baseUrl}}/shop-locations/{location-id}/
+Authorization: Bearer {{token}}
+
+### Approve Shop Location (Admin Only)
+POST {{baseUrl}}/shop-locations/{location-id}/approve/
+Authorization: Bearer {{token}}
+
+### Reject Shop Location (Admin Only)
+POST {{baseUrl}}/shop-locations/{location-id}/reject/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "reason": "Incomplete information provided"
+}
+
+### ============================================
 ### NOTES FOR TESTING
 ### ============================================
 
@@ -942,3 +1101,46 @@ Content-Type: application/json
 
 # 10. Complete Refund (Admin)
 #     POST /api/refunds/{refund-id}/complete/
+
+### ============================================
+### SHOP LOCATIONS TESTING WORKFLOW
+### ============================================
+
+# 1. Public Map Access (No Auth)
+#    GET /api/shop-locations/public_map/
+#    Returns all approved locations for map display
+
+# 2. Seller Creates Location Request
+#    POST /api/shop-locations/ with location details
+#    Status will be "pending" by default
+
+# 3. Seller Views Their Locations
+#    GET /api/shop-locations/my_locations/
+#    See all their locations with approval status
+
+# 4. Admin Views Pending Requests
+#    GET /api/shop-locations/pending_approvals/
+#    See all locations awaiting approval
+
+# 5. Admin Approves Location
+#    POST /api/shop-locations/{location-id}/approve/
+#    Location becomes visible on public map
+
+# 6. Admin Rejects Location
+#    POST /api/shop-locations/{location-id}/reject/
+#    with optional reason in request body
+
+# 7. Check Public Map Again
+#    GET /api/shop-locations/public_map/
+#    Approved locations now visible
+
+# 8. Filter by Location Type
+#    GET /api/shop-locations/public_map/?type=shop
+#    or type=service or type=warehouse
+
+# 9. Filter by City
+#    GET /api/shop-locations/public_map/?city=Dhaka
+
+# 10. View Statistics
+#     GET /api/shop-locations/stats/
+#     See total, approved, pending, rejected counts

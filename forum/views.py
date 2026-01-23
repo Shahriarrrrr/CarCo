@@ -115,7 +115,7 @@ class ForumThreadViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
     
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def add_response(self, request, pk=None):
         """Add a response to a thread."""
         thread = self.get_object()
@@ -199,6 +199,11 @@ class ForumResponseViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 Q(is_approved=True) | Q(author=self.request.user)
             )
+        
+        # Filter by thread if provided
+        thread_id = self.request.query_params.get('thread')
+        if thread_id:
+            queryset = queryset.filter(thread_id=thread_id)
         
         return queryset.select_related('author', 'thread').prefetch_related('votes')
     

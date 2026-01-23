@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'notifications',
     'messaging',
     'payments',
+    'locations',
 
     # Third party
     'rest_framework',
