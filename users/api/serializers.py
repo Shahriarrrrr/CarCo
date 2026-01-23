@@ -104,7 +104,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         fields = [
             'first_name', 'last_name', 'phone_number', 'date_of_birth',
             'profile_picture', 'bio', 'street_address', 'city',
-            'state_province', 'postal_code', 'country', 'company_website',
+            'state_province', 'postal_code', 'country', 'company_name',
+            'company_registration_number', 'company_website',
             'e_tin', 'trade_license_number'
         ]
     

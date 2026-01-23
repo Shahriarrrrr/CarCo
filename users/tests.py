@@ -40,7 +40,8 @@ class CustomUserModelTest(TestCase):
 			CustomUser.objects.create_user(email=None, password='nopass')
 
 	def test_str_method(self):
-		self.assertEqual(str(self.user), self.email)
+		expected_str = f"{self.user.get_full_name()} ({self.email})"
+		self.assertEqual(str(self.user), expected_str)
 
 	def test_profile_picture_blank(self):
 		self.assertFalse(self.user.profile_picture)
