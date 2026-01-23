@@ -23,7 +23,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = [
             'email', 'password', 'password2', 'first_name', 'last_name',
             'phone_number', 'user_type', 'company_name', 'company_registration_number',
-            'e_tin', 'trade_license_number'
+            'business_email', 'e_tin', 'trade_license_number', 'nid_number'
         ]
         extra_kwargs = {
             'first_name': {'required': True},
@@ -81,7 +81,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 'email', 'first_name', 'last_name', 'full_name',
             'phone_number', 'date_of_birth', 'profile_picture', 'bio',
             'street_address', 'city', 'state_province', 'postal_code', 'country',
-            'user_type', 'company_name', 'company_website', 'e_tin', 'trade_license_number',
+            'user_type', 'company_name', 'company_website', 'business_email',
+            'e_tin', 'trade_license_number', 'nid_number',
             'email_verified', 'phone_verified', 'verification_status',
             'is_seller', 'is_buyer', 'seller_rating', 'seller_reviews_count',
             'date_joined', 'updated_at'
@@ -105,8 +106,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'first_name', 'last_name', 'phone_number', 'date_of_birth',
             'profile_picture', 'bio', 'street_address', 'city',
             'state_province', 'postal_code', 'country', 'company_name',
-            'company_registration_number', 'company_website',
-            'e_tin', 'trade_license_number'
+            'company_registration_number', 'company_website', 'business_email',
+            'e_tin', 'trade_license_number', 'nid_number'
         ]
     
     def validate_phone_number(self, value):
