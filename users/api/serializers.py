@@ -83,7 +83,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'street_address', 'city', 'state_province', 'postal_code', 'country',
             'user_type', 'company_name', 'company_website', 'business_email',
             'business_phone_number', 'e_tin', 'trade_license_number', 'nid_number',
-            'email_verified', 'phone_verified', 'verification_status',
+            'email_verified', 'phone_verified', 'verification_status', 'verification_count',
             'is_seller', 'is_buyer', 'seller_rating', 'seller_reviews_count',
             'date_joined', 'updated_at'
         ]
@@ -107,7 +107,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'profile_picture', 'bio', 'street_address', 'city',
             'state_province', 'postal_code', 'country', 'company_name',
             'company_registration_number', 'company_website', 'business_email',
-            'business_phone_number', 'e_tin', 'trade_license_number', 'nid_number'
+            'business_phone_number', 'e_tin', 'trade_license_number', 'nid_number',
+            'verification_count'
         ]
     
     def validate_phone_number(self, value):

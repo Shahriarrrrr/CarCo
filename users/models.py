@@ -115,6 +115,7 @@ class CustomUser(AbstractUser):
         default='unverified'
     )
     verification_document = models.FileField(upload_to='verification_docs/%Y/%m/', null=True, blank=True)
+    verification_count = models.IntegerField(default=0, help_text='Number of verification attempts')
     
     # Account status
     is_active = models.BooleanField(default=True)
